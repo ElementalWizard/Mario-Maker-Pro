@@ -15,7 +15,6 @@ public class Background {
 	private int xPos2;
 	private int yPos;
 	private int size;
-	private boolean attacked = false;
 	private boolean willA = false;
 	private Animation anim;
 	private Rectangle bounds;
@@ -45,10 +44,9 @@ public class Background {
 		}
 		if(this.willA) this.attack();
 		if(this.handler.getMario().getBounds().intersects(this.bounds)) {
-			this.attacked = true;
 			this.handler.getMario().setHit(true);
 		}
-		if(this.attacked) this.bounds.setBounds(0, 0, 0, 0);
+		if(handler.getMario().getHit()) this.bounds.setBounds(0, 0, 0, 0);
 		else this.bounds.setBounds(this.xPos2, this.yPos,  this.size,  this.size);
 		this.time = System.currentTimeMillis();
 		if(!this.handler.getMario().getHit() && this.getBounds().getX() <= 40 * MapBuilder.pixelMultiplier && 
