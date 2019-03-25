@@ -85,7 +85,6 @@ public class MenuState extends State {
 				uiManager.addObjects(new UIStringButton(handler.getWidth() / 2 - 64, (handler.getHeight() / 2) + (handler.getHeight() / 10) - (64), 128, 64, "New Map", () -> {
 					mode = "Menu";
 					initNew("New Map Creator", handler);
-					this.clear();
 				}, handler,Color.BLACK));
 
 
@@ -290,8 +289,7 @@ public class MenuState extends State {
 	}
 	
 	public void clear() {
-		g = bs.getDrawGraphics();
-		g.clearRect(0, 0,  handler.getWidth()+handler.getWidth()/2, handler.getHeight());
+
 		
 	}
 
