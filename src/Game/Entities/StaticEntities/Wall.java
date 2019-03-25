@@ -25,7 +25,6 @@ public class Wall {
 	private boolean play = false;
 	private boolean draw = false;
 	private Random rand;
-	private Rectangle rect;
 	private String str = "";
 	private String str2 = "";
 	private int sX = 70 * MapBuilder.pixelMultiplier;
@@ -48,12 +47,11 @@ public class Wall {
 		this.d = this.rand.nextInt(2);
 		this.anim = new Animation(25, Images.hitWall);
 		this.setSY((int) (this.handler.getCamera().getY() + this.handler.getHeight() / 2 + 50));
-		this.rect = new Rectangle(38 * MapBuilder.pixelMultiplier, 90 * MapBuilder.pixelMultiplier, 440, 50);
 	}
 
 	public void tick() {
-		if(this.handler.getMario().getHit() && this.getRect().intersects(this.handler.getMario().getBounds())) {
-			this.getRect().setBounds(0, 0, 0, 0);
+		if(this.handler.getMario().getHit() && this.handler.getMap().getRect().intersects(this.handler.getMario().getBounds())) {
+			this.handler.getMap().getRect().setBounds(0, 0, 0, 0);
 			this.handler.getGame().getMusicHandler().play("finished");
 			this.setPlay(true);
 		}
@@ -72,12 +70,14 @@ public class Wall {
 			str="";
 			for (int i:alf5) { str+=(char)i;}str+="!";
 		}
-		else if(!this.handler.getMario().getHit()&& handler.getMario().getVelY()==0){
+		else if(!this.handler.getMario().getHit() && this.handler.getMario().getVelY() == 0){
 			str="";
 			for (int i:alf) { str+=(char)i;}str+="! ";
-			for (int i:alf2) { str2+=(char)i;}str2+=" ";
-			for (int i:alf3) { str2+=(char)i;}str2+=" ";
-			for (int i:alf4) { str2+=(char)i;}str2+=" ";
+			if(!((MenuState) handler.getGame().menuState).getBut().getdraw()) {
+				for (int i:alf2) { str2+=(char)i;}str2+=" ";
+				for (int i:alf3) { str2+=(char)i;}str2+=" ";
+				for (int i:alf4) { str2+=(char)i;}str2+=" ";
+			}
 
 		}
 		if(this.opacity >= 254) this.opacity = 255;
@@ -86,7 +86,11 @@ public class Wall {
 			if(this.alpha >= 254) this.alpha = 255;
 		}
 		if(this.handler.getKeyManager().keyJustPressed(KeyEvent.VK_ENTER) && this.opacity == 255) {
-			MapBuilder.mapDone = false;
+			if(this.str.startsWith("D")) {
+				((MenuState) handler.getGame().menuState).getBut().setDraw(false);
+				MapBuilder.mapDone = false;
+			}
+			else ((MenuState) handler.getGame().menuState).getBut().setDraw(true);
 			State.setState(handler.getGame().menuState);
 		}
 	}
@@ -111,7 +115,6 @@ public class Wall {
 			g2.setColor(new Color(0 ,0 ,0 , this.alpha));
 			g2.drawString("'Enter' --  Exit Game.", this.sX + 140, this.sY + 50);	
 			if(str.startsWith("C")) {
-				((MenuState) handler.getGame().menuState).getBut().setDraw(true);
 				g2.drawString(str2, 0, this.sY + 75);
 				g2.setColor(Color.ORANGE);
 				g2.drawString("Skill or just Luck?", this.sX + 150, this.sY - 125);
@@ -130,9 +133,6 @@ public class Wall {
 	}
 	public void setPlay(boolean play) {
 		this.play = play;
-	}
-	public Rectangle getRect() {
-		return this.rect;
 	}
 	public boolean getDraw() {
 		return this.draw;

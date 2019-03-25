@@ -24,6 +24,7 @@ public class Map {
     private Random rand;
     private Wall walls;
     private int mapBackground;
+    Rectangle rect;
 
     public Map(Handler handler) {
         this.handler=handler;
@@ -33,6 +34,7 @@ public class Map {
         this.walls = new Wall(this.handler);
         this.blocksOnMap = new ArrayList<>();
         this.enemiesOnMap = new ArrayList<>();
+        this.rect = new Rectangle(0,0, 50, 500);
         bottomBorder=handler.getHeight();
         this.mapBackground = this.rand.nextInt(6);
     }
@@ -81,7 +83,10 @@ public class Map {
         }
         g2.translate(camLocation.x, camLocation.y);
     }
-
+    public void updateRect() {
+    	this.getRect().setBounds((int) handler.getCamera().getX() - 50,
+    	(int) handler.getCamera().getY() - 300, 50, 600);
+    }
     public ArrayList<BaseStaticEntity> getBlocksOnMap() {
         return blocksOnMap;
     }
@@ -96,6 +101,9 @@ public class Map {
 
     public UIListener getListener() {
         return this.listener;
+    }
+    public Rectangle getRect() {
+    	return this.rect;
     }
     public Background getHand() {
         return this.hand;

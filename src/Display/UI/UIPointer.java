@@ -1,7 +1,6 @@
 package Display.UI;
 
 import Game.Entities.DynamicEntities.BaseDynamicEntity;
-import Game.GameStates.State;
 import Main.Handler;
 import Resources.Animation;
 import Resources.Images;
@@ -11,7 +10,7 @@ import java.util.Random;
 
 public class UIPointer extends BaseDynamicEntity {
 
-    Animation idle,GB1,GB2,GB3,FG,hit;
+    Animation idle,GB1,GB2,GB3,FG;
     boolean FlagGB1=false,FlagGB2=false,FlagGB3=false,FlagFG=false,FlagSmash=false,wasHit=false,died=false,attacking=false,start=true,movingToIdle =false,outOfCamera=true,smash=false,kill=false,killed=false,bulletOnMap=false;
     float HitR=0.0f,HitG=0.0f,HitB=0.0f;
     int health=3,attackCounter=0,startX,startY,idleCounter=0,squeeze=0;
@@ -31,7 +30,6 @@ public class UIPointer extends BaseDynamicEntity {
         GB2 = new Animation(500, Images.enemyGB2);
         GB3 = new Animation(450, Images.enemyGB3);
         FG = new Animation(200, Images.enemyFG);
-        hit = new Animation(25, Images.hitWall);
         falling=false;
         oldDim = getDimension();
         direction="Left";
@@ -43,15 +41,16 @@ public class UIPointer extends BaseDynamicEntity {
     public void tick(){
 
         if(bulletOnMap) {
-            bulletRect = new Rectangle(bulletX, bulletY, 64, 73);
+            bulletRect.setBounds(bulletX, bulletY, 64, 73);
             if(bulletX<=x-handler.getWidth()){
                 bulletOnMap=false;
             }
         }
         if(start) {
             if (kill) {
+            	this.movingToIdle = true;
+            	this.Idle();
                 idle.tick();
-                hit.tick();
 
             }else if(!killed){
                 if (idle.getIndex() >= 7) {
@@ -118,9 +117,7 @@ public class UIPointer extends BaseDynamicEntity {
         if(start) {
             if (kill) {
                 g.drawImage(idle.getCurrentFrame(), x, y, width, height, null);
-                g.drawImage(hit.getCurrentFrame(), (int) this.handler.getCamera().getX(), (int) this.handler.getCamera().getY(), handler.getWidth(), handler.getHeight(), null);
-                handler.getMario().setX(handler.getMario().getX() - 30);
-                handler.getMario().setY(handler.getMario().getY() - 30);
+                this.handler.getMario().setHit(true);
                 if(handler.getMario().x<=handler.getCamera().getX()-handler.getWidth()/6 && handler.getMario().y<=handler.getCamera().getY()-handler.getHeight()/6){
                     kill=false;
                     killed=true;
@@ -135,8 +132,6 @@ public class UIPointer extends BaseDynamicEntity {
                     movingToIdle=false;
                     x=startX;
                     y=startY;
-                    this.handler.getGame().getMusicHandler().play("finished");
-                    State.setState(handler.getGame().menuState);
                 }
 
             } else if(!killed){
@@ -182,7 +177,7 @@ public class UIPointer extends BaseDynamicEntity {
             }
         }
         if(bulletOnMap){
-            g.drawImage(Images.enemyBL,bulletX-=4,bulletY,64,73,null);
+            g.drawImage(Images.enemyBL,bulletX-=10,bulletY,64,73,null);
         }
         if(killed){
             killed = false;
@@ -269,7 +264,7 @@ public class UIPointer extends BaseDynamicEntity {
                 bulletX=x;
                 bulletY= y+42;
                 bulletOnMap=true;
-                bulletRect = new Rectangle(bulletX,bulletY,64,71);
+                bulletRect.setBounds(bulletX,bulletY,64,71);
             }
             if(FG.getIndex()==8 && !bulletOnMap){
                 attacking=false;
@@ -284,7 +279,6 @@ public class UIPointer extends BaseDynamicEntity {
         }
         if(bulletRect.intersects(handler.getMario().getBounds())){
             kill=true;
-            this.handler.getGame().getMusicHandler().play("defeated");
         }
 
 
@@ -320,7 +314,6 @@ public class UIPointer extends BaseDynamicEntity {
                 y+=22;
                 if(getBounds().intersects(handler.getMario().getBounds())){
                     kill=true;
-                    this.handler.getGame().getMusicHandler().play("defeated");
                 }
             }
             else{

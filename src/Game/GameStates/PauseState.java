@@ -1,6 +1,7 @@
 package Game.GameStates;
 
 import Display.UI.UIStringButton;
+import Game.World.MapBuilder;
 import Main.Handler;
 import Resources.Images;
 import Display.UI.UIManager;
@@ -31,6 +32,8 @@ public class PauseState extends State {
 
         uiManager.addObjects(new UIStringButton(56, (223+(64+16))+(64+16), 128, 64, "Title", () -> {
             handler.getMouseManager().setUimanager(null);
+            MapBuilder.mapDone = false;
+            ((MenuState) handler.getGame().menuState).getBut().setDraw(false);
             State.setState(handler.getGame().menuState);
         },handler,Color.WHITE));
 
